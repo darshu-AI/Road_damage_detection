@@ -1,4 +1,4 @@
-﻿torch
+torch
 torchvision
 ultralytics
 transformers
@@ -12,4 +12,4 @@ requests
 matplotlib
 pandas
 pytest
-Flask
+flask
