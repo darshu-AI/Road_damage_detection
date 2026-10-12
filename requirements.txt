@@ -1,0 +1,14 @@
+﻿torch
+torchvision
+ultralytics
+transformers
+accelerate
+qwen-vl-utils
+gradio>=4.44.0
+opencv-python
+Pillow
+numpy
+requests
+matplotlib
+pandas
+pytest
