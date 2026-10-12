@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Road Damage Detection</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 760px; margin: 40px auto; padding: 20px; background: #f4f7fb; color: #172033; }
+    main { background: white; padding: 26px; border-radius: 16px; box-shadow: 0 5px 24px #0001; }
+    h1 { color: #174ea6; }
+    input, button { margin: 12px 0; padding: 12px; max-width: 100%; }
+    button { background: #174ea6; color: white; border: 0; border-radius: 8px; cursor: pointer; }
+    button:disabled { opacity: .5; }
+    img { max-width: 100%; border-radius: 10px; margin-top: 16px; }
+    #status { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Road Damage Detection</h1>
+  <p>Upload a road image to detect cracks and road damage.</p>
+  <form id="form">
+    <input id="image" type="file" accept="image/*" required>
+    <br>
+    <button id="submit" type="submit">Detect Road Damage</button>
+  </form>
+  <p id="status">Choose an image to get started.</p>
+  <section id="results"></section>
+</main>
+<script>
+const API = "https://road-damage-detection-mmee.onrender.com/predict";
+const form = document.getElementById("form");
+const status = document.getElementById("status");
+const button = document.getElementById("submit");
+const results = document.getElementById("results");
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const file = document.getElementById("image").files[0];
+  if (!file) return;
+
+  button.disabled = true;
+  results.replaceChildren();
+  status.textContent = "Analyzing image... The first request may take a minute.";
+  try {
+    const data = new FormData();
+    data.append("image", file);
+
+    const response = await fetch(API, { method: "POST", body: data });
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Prediction failed.");
+    }
+
+    status.textContent =
+      "Total cracks detected: " + result.total_cracks +
+      "\nAverage confidence: " +
+      (Number(result.average_confidence || 0) * 100).toFixed(1) + "%";
+
+    const counts = document.createElement("p");
+    counts.textContent = "Class counts: " +
+      JSON.stringify(result.class_counts || {});
+    results.appendChild(counts);
+
+    if (result.annotated_image) {
+      const img = document.createElement("img");
+      img.alt = "Road image with detected damage";
+      img.src = result.annotated_image.startsWith("data:")
+        ? result.annotated_image
+        : "data:image/jpeg;base64," + result.annotated_image;
+      results.appendChild(img);
+    }
+  } catch (error) {
+    status.textContent = "Error: " + error.message +
+      "\nCheck that the Render API is running.";
+  } finally {
+    button.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
