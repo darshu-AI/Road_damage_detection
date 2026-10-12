@@ -1,7 +1,6 @@
 flask
 flask-cors
 gunicorn
-pillow
 numpy
 opencv-python-headless
 torch
