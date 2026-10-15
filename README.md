@@ -1,13 +1,3 @@
-
----
-title: Road Crack Detection AI
-emoji: 🛣️
-colorFrom: gray
-colorTo: blue
-sdk: docker
-app_port: 7860
----
-
 # Road Crack Detection AI
 
 Road pavement defect detection using a custom-trained Ultralytics model, Grad-CAM explainability, and optional Qwen2-VL structural assessment.
